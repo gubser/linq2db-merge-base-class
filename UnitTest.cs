@@ -13,16 +13,13 @@ public class MyBaseClass
 {
     [Column("id"), PrimaryKey]
     public int Id { get; set; }
-
-    [Column("value_a")]
-    public int ValueA { get; set;  }
 }
 
 [Table("mytable")]
 public class MyChildClass : MyBaseClass
 {
-    [Column("value_b")]
-    public int ValueB { get; set; }
+    [Column("value")]
+    public int Value { get; set; }
 }
 
 public class Tests
@@ -82,17 +79,17 @@ public class Tests
         using var conn = new DataConnection(_dataOptions);
 
         List<MyChildClass> items = [
-            new MyChildClass { ValueA = 1, ValueB = 1 },
-            new MyChildClass { ValueA = 2, ValueB = 2 },
-            new MyChildClass { ValueA = 3, ValueB = 3 },
-            new MyChildClass { ValueA = 4, ValueB = 4 },
+            new MyChildClass { Value = 1 },
+            new MyChildClass { Value = 2 },
+            new MyChildClass { Value = 3 },
+            new MyChildClass { Value = 4 },
         ];
 
         int affected =
             conn.GetTable<MyChildClass>()
                 .Merge()
                 .Using(items)
-                .On((x, y) => x.ValueA == y.ValueA && x.ValueB == y.ValueB)
+                .OnTargetKey()
                 .InsertWhenNotMatched()
                 .Merge();
 
